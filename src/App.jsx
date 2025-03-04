@@ -3,8 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { DndContext, PointerSensor, useSensor, useSensors, closestCorners } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Column } from "./components/Column/Column";
-import { Input } from "./components/Input/Input";
+import { Input_Component } from "./components/Input/Input";
 import { Forms } from "./components/Forms/Forms";
+import { Button, Flex, Card} from 'antd';
 
 import "./App.css";
 
@@ -131,11 +132,53 @@ export default function App() {
     URL.revokeObjectURL(url); // Clean up the URL object after download
   };
 
+  const handleImportJson = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+  
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const importedForms = JSON.parse(e.target.result);
+          if (Array.isArray(importedForms)) {
+            setForms(importedForms.map(form => ({
+              ...form,
+              id: form.id || uuidv4(),
+              tasks: form.tasks.map(task => ({
+                ...task,
+                id: task.id || uuidv4(),
+              })),
+            })));
+            setActiveFormId(importedForms[0]?.id || defaultFormId);
+          }
+        } catch (error) {
+          console.error("Invalid JSON file.", error);
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click(); // Triggers the file selection dialog
+  };
+
   return (
     <div className="App">
       <h1>My Forms</h1>
-      <div style={{ display: "flex", gap: "20px" }}>
-        <div className="main-container" style={{ flex: "1" }}>
+      <Flex style={{ gap: "20px" }}>
+        <Flex vertical={true} align="center" gap="small">
+          <Card style={{ width: 300 }}>
+            <Flex vertical={true} gap="small">
+              <Button type="primary" onClick={handleImportJson}>
+                Load Form
+              </Button>
+              <Button onClick={handleExportJson}>
+                Save Form
+              </Button>
+            </Flex>
+          </Card>
           <Forms
             forms={forms}
             currentFormId={activeFormId}
@@ -148,19 +191,14 @@ export default function App() {
               }
             }}
           />
-          <Input onSubmit={addTask} />
-        </div>
+          <Input_Component onSubmit={addTask} />
+        </Flex>
         <div style={{ flex: "2" }}>
           <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
             <Column tasks={activeForm?.tasks || []} onDelete={handleDeleteTask} onEdit={handleEditTask} formName={activeForm?.name} updateFormName={updateFormName}/>
           </DndContext>
         </div>
-      </div>
-
-      {/* Button to export all forms as JSON */}
-      <button className="export-json-button" onClick={handleExportJson}>
-        Export All Forms as JSON
-      </button>
+      </Flex>
     </div>
   );
 }

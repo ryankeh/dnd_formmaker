@@ -1,45 +1,23 @@
-.forms-container {
-  width: 100%;
-  max-width: 500px;
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.forms-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-}
-
-.forms-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
 .form-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* Ensures delete button stays visible */
+  gap: 8px; /* Adds spacing between text and delete button */
   padding: 5px;
   border-radius: 5px;
-  background: #fff;
+  background: #f2f2f2;
   transition: background 0.3s ease;
+  white-space: nowrap; /* Prevents wrapping */
+  overflow: hidden;
 }
 
 .form-item.active {
-  background: #4CAF50;
+  background: #1677ff;
   color: white;
 }
 
 .form-button {
-  flex-grow: 1;
+  flex-grow: 1; /* Allows button to take up available space */
   padding: 8px 10px;
   font-size: 16px;
   text-align: left;
@@ -47,6 +25,10 @@
   border: none;
   cursor: pointer;
   transition: color 0.3s;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Truncates long text with "..." */
+  white-space: nowrap;
+  max-width: calc(100% - 40px); /* Prevents the name from pushing delete button out */
 }
 
 .form-item.active .form-button {
@@ -54,37 +36,5 @@
 }
 
 .form-button:hover {
-  color: #4CAF50;
+  color: #1677ff;
 }
-
-.delete-form {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #d9534f;
-  transition: color 0.3s ease;
-}
-
-.delete-form:hover {
-  color: #c9302c;
-}
-
-.add-form-button {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background 0.3s ease;
-}
-
-.add-form-button:hover {
-  background-color: #45a049;
-}
-
-  
-  

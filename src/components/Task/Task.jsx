@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Input, Button, Flex, Typography, Card} from 'antd';
 import "./Task.css";
+
+const { Title, Paragraph, Text, Link } = Typography;
 
 export const Task = ({ task, onDelete, onEdit }) => {
   const { id, question, inputType, radioOptions, answer } = task;
@@ -29,56 +32,56 @@ export const Task = ({ task, onDelete, onEdit }) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="task">
-      <div className="task-content">
-        <span className="inputType">{inputType}</span>
-        {isEditingQuestion ? (
-          <input
-            className="edit-input"
-            type="text"
-            value={editedQuestion}
-            onChange={handleQuestionChange}
-            onBlur={handleBlur}
-            autoFocus
-          />
-        ) : (
-          <span className="question" onClick={() => setIsEditingQuestion(true)}>
-            {question}
-          </span>
-        )}
-
-        <div className="answer-section">
-          <strong>Answer: </strong>
-          {inputType === "radio" && radioOptions ? (
-            <div className="rating-scale">
-              {radioOptions.map((option, index) => (
-                <label key={index} className="rating-option">
-                  <input
-                    type="radio"
-                    name={`rating-${id}`} // Ensures only one option is selected per task
-                    value={option}
-                    checked={answer === option}
-                    onChange={() => handleRadioSelect(option)}
-                  />
-                  {option}
-                </label>
-              ))}
-            </div>
-          ) : (
-            <input
-              className="edit-input"
+    <Card style={{ width: 300 }} ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Flex vertical={false} gap ="middle" align="center" justify="space-between">
+        <Flex vertical={true}>
+          <Text strong>{inputType}</Text>
+          {isEditingQuestion ? (
+            <Input
               type="text"
-              value={answer}
-              onChange={(e) => onEdit(id, { answer: e.target.value })}
+              value={editedQuestion}
+              onChange={handleQuestionChange}
+              onBlur={handleBlur}
+              autoFocus
             />
+          ) : (
+            <Text onClick={() => setIsEditingQuestion(true)}>
+              {question}
+            </Text>
           )}
 
-        </div>
-      </div>
-      <div className="task-buttons">
-        <button onClick={() => setIsEditingQuestion(true)} className="edit-button">Edit</button>
-        <button onClick={() => onDelete(id)} className="delete-button">X</button>
-      </div>
-    </div>
+          <div>
+            <Text strong>Answer: </Text>
+            {inputType === "radio" && radioOptions ? (
+              <div className="rating-scale">
+                {radioOptions.map((option, index) => (
+                  <label key={index} className="rating-option">
+                    <input
+                      type="radio"
+                      name={`rating-${id}`} // Ensures only one option is selected per task
+                      value={option}
+                      checked={answer === option}
+                      onChange={() => handleRadioSelect(option)}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            ) : (
+              <Input
+                type="text"
+                value={answer}
+                onChange={(e) => onEdit(id, { answer: e.target.value })}
+              />
+            )}
+
+          </div>
+        </Flex>
+        <Flex vertical={false}>
+          <Button type="primary" onClick={() => setIsEditingQuestion(true)}>Edit</Button>
+          <Button danger type="text" onClick={() => onDelete(id)}>X</Button>
+        </Flex>
+      </Flex>
+    </Card>
   );
 };

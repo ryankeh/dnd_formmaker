@@ -1,7 +1,8 @@
 import { useState } from "react";
 import "./Input.css";
+import { Input, Button, Flex } from 'antd';
 
-export const Input = ({ onSubmit }) => {
+export const Input_Component = ({ onSubmit }) => {
   const [inputType, setInputType] = useState("open-ended");
   const [question, setQuestion] = useState("");
   const [radioOptions, setRadioOptions] = useState(""); // State for custom radio options
@@ -21,7 +22,10 @@ export const Input = ({ onSubmit }) => {
   };
 
   return (
-    <div className="input-container">
+    <Flex
+      gap="small"
+      vertical={true}
+    >
       <select
         className="select"
         value={inputType}
@@ -31,8 +35,8 @@ export const Input = ({ onSubmit }) => {
         <option value="open-ended">Open-ended</option>
       </select>
 
-      <input
-        className="input"
+      <Input
+        // variant="filled"
         type="text"
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
@@ -40,20 +44,21 @@ export const Input = ({ onSubmit }) => {
       />
 
       {inputType === "radio" && (
-        <div className="radio-options-container">
-          <input
-            className="input"
-            type="text"
-            value={radioOptions}
-            onChange={(e) => setRadioOptions(e.target.value)}
-            placeholder="Enter semicolon-separated radio options (e.g. Yes; No; Maybe)"
-          />
-        </div>
+        <Input
+          type="text"
+          value={radioOptions}
+          onChange={(e) => setRadioOptions(e.target.value)}
+          placeholder="Enter semicolon-separated radio options (e.g. Yes; No; Maybe)"
+        />
       )}
 
-      <button onClick={handleSubmit} className="button">
+      <Button
+        type="primary"
+        onClick={handleSubmit}
+        // className="button"
+      >
         Add
-      </button>
-    </div>
+      </Button>
+    </Flex>
   );
 };

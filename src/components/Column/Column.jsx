@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Task } from "../Task/Task";
 import "./Column.css";
+import { Input, Button, Flex, Typography, Card} from 'antd';
+
+const { Title, Paragraph, Text, Link } = Typography;
 
 export const Column = ({ tasks, formName, onDelete, onEdit, updateFormName }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newFormName, setNewFormName] = useState(formName);
+
+  // Sync newFormName with formName when switching forms
+  useEffect(() => {
+    setNewFormName(formName);
+  }, [formName]);
 
   const handleFormNameChange = (e) => {
     setNewFormName(e.target.value);
@@ -13,40 +21,41 @@ export const Column = ({ tasks, formName, onDelete, onEdit, updateFormName }) =>
 
   const handleSaveName = () => {
     if (newFormName !== formName) {
-      updateFormName(newFormName); // Update the form name in the parent (App.js)
+      updateFormName(newFormName); // Update form name in parent component
     }
-    setIsEditing(false); // Stop editing
+    setIsEditing(false);
   };
 
   return (
-    <div className="column">
-      {/* Display the form name with the option to edit */}
-      {isEditing ? (
-        <div className="form-name-edit">
-          <input
-            type="text"
-            value={newFormName}
-            onChange={handleFormNameChange}
-            autoFocus
-          />
-          <button onClick={handleSaveName}>Save</button>
-        </div>
-      ) : (
-        <h2 className="form-name" onClick={() => setIsEditing(true)}>
-          {formName}
-        </h2>
-      )}
+    <Card style={{ width: 500 }} className="column">
+      <Flex vertical={true} gap="middle">
+        {isEditing ? (
+          <Flex gap="middle">
+            <Input
+              type="text"
+              value={newFormName}
+              onChange={handleFormNameChange}
+              onBlur={handleSaveName} // Save when clicking away
+              autoFocus
+            />
+            <Button type="primary" onClick={handleSaveName}>Save</Button>
+          </Flex>
+        ) : (
+          <Typography.Title editable level={4} className="form-name" onClick={() => setIsEditing(true)}>
+            {formName}
+          </Typography.Title>
+        )}
 
-      {/* If there are tasks, show them in a sortable context */}
-      {tasks.length === 0 ? (
-        <p className="no-tasks-message">No tasks yet. Add a task below!</p>
-      ) : (
-        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <Task key={task.id} task={task} onDelete={onDelete} onEdit={onEdit} />
-          ))}
-        </SortableContext>
-      )}
-    </div>
+        {tasks.length === 0 ? (
+          <Flex justify="center"><Text type="secondary">No tasks yet. Add a task below!</Text></Flex>
+        ) : (
+          <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+            {tasks.map((task) => (
+              <Task key={task.id} task={task} onDelete={onDelete} onEdit={onEdit} />
+            ))}
+          </SortableContext>
+        )}
+      </Flex>
+    </Card>
   );
 };
